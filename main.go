@@ -22,7 +22,7 @@ func main() {
 	var ch = make(chan ws.Website)
 
 	for _, w := range websites {
-		wg.Add(1)
+		wg.Add(2)
 		go func(w ws.Website, ch chan<- ws.Website) {
 			w.Check(ch)
 		}(w, ch)
