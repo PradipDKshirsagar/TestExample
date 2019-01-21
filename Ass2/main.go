@@ -1,7 +1,7 @@
 package main
 
 import (
-	ws "TestExample/website"
+	ws "TestExample/Ass2/website"
 	"fmt"
 	"sync"
 )
@@ -19,12 +19,12 @@ func main() {
 
 	wg := sync.WaitGroup{}
 
-	var ch = make(chan ws.Website)
-
+	var ch = make(chan ws.Website,2)
+	cnt := 0
 	for _, w := range websites {
 		wg.Add(2)
 		go func(w ws.Website, ch chan<- ws.Website) {
-			w.Check(&wg,ch)
+			w.Check(&wg,ch,&cnt)
 		}(w, ch)
 
 		go func(ch <-chan ws.Website) {
@@ -32,6 +32,7 @@ func main() {
 			fmt.Print(w.Url, " is ")
 			if w.Status {
 				fmt.Println("Up")
+				cnt++
 			} else {
 				fmt.Println("Down")
 			}
