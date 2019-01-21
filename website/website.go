@@ -2,7 +2,7 @@ package website
 
 import (
 	"net/http"
-	"sync"
+	//"sync"
 )
 
 //Website holds the basic website info like url, name
@@ -12,7 +12,7 @@ type Website struct {
 	Status bool
 }
 
-func (w Website) Check(wg *sync.WaitGroup, ch chan Website) {
+func (w Website) Check(ch chan Website) {
 	_, err := http.Get(w.Url)
 	if err != nil {
 		w.Status = false
@@ -21,5 +21,5 @@ func (w Website) Check(wg *sync.WaitGroup, ch chan Website) {
 		w.Status = true
 		ch <- w
 	}
-	wg.Done()
+	//wg.Done()
 }
