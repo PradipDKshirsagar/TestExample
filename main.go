@@ -3,7 +3,7 @@ package main
 import (
 	ws "TestExample/website"
 	"fmt"
-//	"sync"
+	"sync"
 )
 
 func main() {
@@ -13,26 +13,32 @@ func main() {
 		{"https://www.google.com", "Google", false},
 		{"https://www.facebook.com", "Facebook", false},
 		{"https://twitter.com", "Twitter", false},
-		{"https://pradipkshirsagar.com", "PradipInfo", false},
 		{"https://youtube.com", "YouTube", false},
+		{"https://pradipkshirsagar.com", "PradipInfo", false},
 	}
 
-//	wg := sync.WaitGroup{}
+	wg := sync.WaitGroup{}
 
 	var ch = make(chan ws.Website)
 
-	for _, p := range websites {
-		//wg.Add(1)
-		w := p
-		go w.Check(ch)
-		w = <-ch
-		fmt.Print(w.Url, " is ")
-		if w.Status {
-			fmt.Println("Up")
-		} else {
-			fmt.Println("Down")
-		}
+	for _, w := range websites {
+		wg.Add(1)
+		go func(w ws.Website, ch chan<- ws.Website) {
+			w.Check(ch)
+		}(w, ch)
+
+		go func(ch <-chan ws.Website) {
+			w = <-ch
+			fmt.Print(w.Url, " is ")
+			if w.Status {
+				fmt.Println("Up")
+			} else {
+				fmt.Println("Down")
+			}
+			fmt.Println("Done")
+			wg.Done()
+		}(ch)
 	}
-	//wg.Wait()
+	wg.Wait()
 	fmt.Println("\nApplication Ends ...")
 }
