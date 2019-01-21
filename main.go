@@ -24,7 +24,7 @@ func main() {
 	for _, w := range websites {
 		wg.Add(2)
 		go func(w ws.Website, ch chan<- ws.Website) {
-			w.Check(ch)
+			w.Check(&wg,ch)
 		}(w, ch)
 
 		go func(ch <-chan ws.Website) {
