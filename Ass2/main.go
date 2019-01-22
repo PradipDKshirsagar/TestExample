@@ -4,6 +4,7 @@ import (
 	ws "TestExample/Ass2/website"
 	"fmt"
 	"sync"
+	"os"
 )
 
 func main() {
@@ -24,7 +25,7 @@ func main() {
 	for _, w := range websites {
 		wg.Add(2)
 		go func(w ws.Website, ch chan<- ws.Website) {
-			w.Check(&wg,ch,&cnt)
+			w.Check(&wg,ch)
 		}(w, ch)
 
 		go func(ch <-chan ws.Website) {
@@ -33,6 +34,10 @@ func main() {
 			if w.Status {
 				fmt.Println("Up")
 				cnt++
+				if cnt == 2 {
+					os.Exit(0)
+				}
+
 			} else {
 				fmt.Println("Down")
 			}
